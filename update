@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# https://superuser.com/questions/908293/download-file-via-http-only-if-changed-since-last-update
+
+imdb_files=( title.basics.tsv title.akas.tsv title.episode.tsv )
+
+for imdb_file in ${imdb_files[@]}; do
+
+    imdb_file_gz="${imdb_file}.gz"
+
+    echo "${imdb_file_gz}"
+    wget -c -nv --show-progress "https://datasets.imdbws.com/${imdb_file_gz}"
+    if [[ -e  "${imdb_file}" ]]; then
+        if [[ "${imdb_file_gz}" -nt  "${imdb_file}" ]]; then
+            gunzip -f --keep "${imdb_file_gz}"
+        fi
+    else
+        gunzip -f --keep "${imdb_file_gz}"
+    fi
+    echo
+
+done
+
+
